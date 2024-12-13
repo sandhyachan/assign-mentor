@@ -43,7 +43,31 @@ server.get('/students', async (request, response) => {
     }
 })
 
-
+server.get('/', (request, response) => {
+    response.send(`
+        <!DOCTYPE html>
+        <html>
+        <head>
+            <title>Mentor-Student API</title>
+            <style>
+                body { font-family: Arial, sans-serif; text-align: center; padding: 20px; }
+                a { display: inline-block; margin: 10px; padding: 10px 20px; text-decoration: none; background-color: rgb(106, 166, 214); color: white; border-radius: 5px; }
+                a:hover { background-color:rgb(137, 179, 213); }
+                h1 { color: #333; }
+                p { font-size: 18px; }
+            </style>
+        </head>
+        <body>
+            <h1>Welcome to the Mentor-Student API</h1>
+            <p>Click on the links below to view available endpoints:</p>
+            <a href="/mentors">View All Mentors</a>
+            <a href="/students">View All Students</a>
+            <a href="/students/mentor/:mentorId">View Students by Mentor</a>
+            <a href="/mentor/student/:studentId">View Mentor for a Student</a>
+        </body>
+        </html>
+    `)
+})
 
 
 server.listen(3000, () => {

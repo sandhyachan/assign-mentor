@@ -11,11 +11,28 @@ server.use(express.json())
 
 server.post('/createMentor', createMentor)
 
+server.post('/createStudent', createStudent)
+
 server.get('/mentors', async (request, response) => {
     try {
         const result = await MentorModel.find()
         response.status(200).json({
             message: "Mentors fetched successfully",
+            data: result
+        })
+    } catch (error) {
+        response.status(400).json({
+            message: "Something went wrong",
+            error: error.message,
+        })
+    }
+})
+
+server.get('/students', async (request, response) => {
+    try {
+        const result = await StudentModel.find()
+        response.status(200).json({
+            message: "Students fetched successfully",
             data: result
         })
     } catch (error) {

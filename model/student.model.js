@@ -7,11 +7,12 @@ const StudentSchema = mongoose.Schema({
     },
     email: {
         type: String,
-        required: true
+        required: true,
+        unique: true
     },
-    username: {
+    mentor: {
         type: String,
-        required: true
+        required: false
     }
 })
 

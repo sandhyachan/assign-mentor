@@ -1,8 +1,10 @@
 const express = require('express')
 const {client, dbName, ObjectId} = require('./dbConf')
 const server = express()
-require('./dbConfig')
+const {connectDB} = require('./dbConfig')
 const {UserModel} = require('./model/User.Model')
+
+connectDB()
 
 server.get('/', async (request, response) => {
     try {
@@ -48,29 +50,32 @@ server.get('/user/:userId', async (request, response) => {
             client.close()
         })
 })
-server.post('/create', (request, response) => {
-    const user = new UserModel({
-        name: "",
-        age: "",
-        mentor: ""
-    })
-    user.save().then((result) => {
-        if(result) {
-            return response.status(201).json({
-                message: "User created successfully",
-                data: request.body
-            })
-        } else {
-            return response.status(500).json({
-                message: "Failed to create users"
-            })
-        }
-    }).catch((err) => {
-        response.status(400).json({
-            message: "Something went wrong"
+
+server.use(express.json())
+
+server.post('/create', async (request, response) => {
+    try {
+        const user = new UserModel({
+            name: request.body.name,
+            age: request.body.age,
+            mentor: request.body.mentor,
         })
-    }) 
+
+        const result = await user.save()
+
+        return response.status(201).json({
+            message: "User created successfully",
+            data: result,
+        })
+    } catch (err) {
+        console.error(err)
+        return response.status(400).json({
+            message: "Something went wrong",
+            error: err.message,
+        })
+    }
 })
+
 
 server.patch('/user/:userId/update', async(request, response) => {
     await client.connect()

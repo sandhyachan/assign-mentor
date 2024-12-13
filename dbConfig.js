@@ -1,8 +1,13 @@
 const mongoose = require('mongoose')
 
-async function initialDBConnection() {
+async function connectDB() {
     try {
-        mongoose.connect("mongodb://27017")
+        const connection = await mongoose.connect("mongodb://localhost:27017/ZenClass", {
+            useNewUrlParser: true,
+            useUnifiedTopology: true,
+            serverSelectionTimeoutMS: 30000,
+        })
+        
         if(connection){
             console.log("DBconnection success")
         } else {
@@ -12,3 +17,5 @@ async function initialDBConnection() {
         console.log(error.message)
     }
 }
+
+module.exports = {connectDB}

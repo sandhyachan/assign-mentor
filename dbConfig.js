@@ -2,19 +2,16 @@ const mongoose = require('mongoose')
 
 async function connectDB() {
     try {
-        const connection = await mongoose.connect("mongodb://localhost:27017/ZenClass", {
-            useNewUrlParser: true,
-            useUnifiedTopology: true,
-            serverSelectionTimeoutMS: 30000,
+        const connection = await mongoose.connect("mongodb://localhost:27017/mentor-assign", {
+            serverSelectionTimeoutMS: 30000
         })
-        
         if(connection){
-            console.log("DBconnection success")
+            console.log("DB connection successful")
         } else {
-            throw new Error("db connecion could not be astablished")
+            throw new Error("DB connecion could not be established")
         }
     } catch (error) {
-        console.log(error.message)
+        console.log("DB connection error:", error.message)
     }
 }
 

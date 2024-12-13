@@ -7,7 +7,16 @@ const MentorSchema = mongoose.Schema({
     },
     email: {
         type: String,
-        required: true
+        required: true,
+        unique: true
+    },
+    assigned_students: [{
+        type: String,
+        ref: 'Student'
+    }],
+    specialization: {
+        type: String,
+        required: false
     }
 })
 

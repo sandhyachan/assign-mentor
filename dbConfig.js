@@ -1,5 +1,6 @@
 const mongoose = require('mongoose')
 
+// Function to connect to MongoDB using Mongoose
 async function connectDB() {
     try {
         const connection = await mongoose.connect("mongodb://localhost:27017/mentor-assign", {

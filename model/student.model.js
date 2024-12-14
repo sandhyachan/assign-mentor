@@ -1,5 +1,6 @@
 const mongoose = require('mongoose')
 
+// Define the Student Schema using Mongoose
 const StudentSchema = mongoose.Schema({
     name: {
         type: String,
@@ -26,6 +27,7 @@ const StudentSchema = mongoose.Schema({
     }],
 })
 
+// Create the Student model based on the schema 
 const StudentModel = mongoose.model('students', StudentSchema)
 
 module.exports = { StudentModel }

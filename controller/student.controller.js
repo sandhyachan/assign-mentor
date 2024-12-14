@@ -1,12 +1,15 @@
+// Import the Mentor and Student models
 const { MentorModel } = require("../model/mentor.model")
 const { StudentModel } = require("../model/student.model")
 
+// Controller function to create a student
 const createStudent = async (request, response) => {
     try {
+        // Create a new student instance using request data
         const student = new StudentModel({
             name: request.body.name,
             email: request.body.email,
-            mentor: request.body.mentor
+            mentor: request.body.mentor // Mentor ID assigned to the student
         })
         const result = await student.save()
         response.status(201).json({
@@ -20,6 +23,7 @@ const createStudent = async (request, response) => {
     }
 }
 
+// Controller function to assign a student to a mentor 
 const assignMentor = async (request, response) => {
     try {
         const mentorId = request.params.mentorId
@@ -32,10 +36,12 @@ const assignMentor = async (request, response) => {
             })
         }
 
+        // Update student(s) who don't have a mentor
         const students = await StudentModel.updateMany(
             { _id: { $in: studentId}, mentor: { $exists: false} },
             { $set: {mentor: mentorId} }
         )
+        // Add student to mentor's assigned list
         mentor.assigned_students.push(...studentId)
 
         await mentor.save()
@@ -51,6 +57,7 @@ const assignMentor = async (request, response) => {
     }
 }
 
+// Controller function to update a student's mentor
 const updateMentor = async (request, response) => {
     try {
         const studentId = request.params.studentId
@@ -70,15 +77,17 @@ const updateMentor = async (request, response) => {
             })
         }
 
+        // If student already has a mentor, store their previous mentor in history
         if (student.mentor) {
             student.mentor_history.push({
                 mentor_id: student.mentor,
                 assigned_at: new Date(),
             })
         }
-        student.mentor = mentorId
+        student.mentor = mentorId // Assign new mentor to student
         await student.save()
 
+        // Add student to new mentor's assigned students list
         if (!mentor.assigned_students.includes(studentId)) {
             mentor.assigned_students.push(studentId)
             await mentor.save()
@@ -97,7 +106,7 @@ const updateMentor = async (request, response) => {
     }
 }
 
-
+// Controller function to get previous mentor of a student
 const getPreviousMentor = async (request, response) => {
     try {
         const studentId = request.params.studentId
@@ -114,6 +123,7 @@ const getPreviousMentor = async (request, response) => {
             })
         }
 
+        // Get the previous mentor's ID and fetch their details
         const previousMentorId = student.mentor_history[student.mentor_history.length - 1].mentor_id
         const previousMentor = await MentorModel.findById(previousMentorId)
         return response.status(200).json({

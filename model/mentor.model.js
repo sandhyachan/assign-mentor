@@ -1,5 +1,6 @@
 const mongoose = require('mongoose')
 
+// Define the Mentor Schema using Mongoose
 const MentorSchema = mongoose.Schema({
     name: {
         type: String,
@@ -20,6 +21,7 @@ const MentorSchema = mongoose.Schema({
     }
 })
 
+// Create the Mentor model based on  schema
 const MentorModel = mongoose.model("mentors", MentorSchema)
 
 module.exports = { MentorModel }

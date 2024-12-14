@@ -51,4 +51,44 @@ const assignMentor = async (request, response) => {
     }
 }
 
-module.exports = { createStudent, assignMentor }
+const updateMentor = async (request, response) => {
+    try {
+        const studentId = request.params.studentId
+        const mentorId = request.body.mentorId
+
+        const student = await StudentModel.findById(studentId)
+        if(!student){
+            return response.status(404).json({
+                message: "Student not Found"
+            })
+        }
+
+        const mentor = await MentorModel.findById(mentorId)
+        if(!mentor){
+            return response.status(404).json({
+                message: "Mentor not Found"
+            })
+        }
+
+        student.mentor = mentorId
+        await student.save()
+
+        if(!mentor.assigned_students.includes(studentId)) {
+            mentor.assigned_students.push(studentId)
+            await mentor.save()
+        }
+
+        response.status(200).json({
+            message: "Mentor updated for the student successfully",
+            data: student
+        })
+    } catch (error) {
+        console.error(error);
+        response.status(400).json({
+            message: 'Error assigning or changing mentor for student',
+            error: error.message
+        })
+    }
+}
+
+module.exports = { createStudent, assignMentor, updateMentor }

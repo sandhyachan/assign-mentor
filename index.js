@@ -1,5 +1,5 @@
 const { createMentor, showStudents } = require('./controller/mentor.controller')
-const { createStudent, assignMentor, updateMentor } = require('./controller/student.controller')
+const { createStudent, assignMentor, updateMentor, getPreviousMentor } = require('./controller/student.controller')
 const {connectDB} = require('./dbConfig')
 const express = require('express')
 const { MentorModel } = require('./model/mentor.model')
@@ -44,6 +44,8 @@ server.get('/students', async (request, response) => {
 })
 
 server.get('/showStudents/:mentorId', showStudents)
+
+server.get('/getPreviousMentor/:studentId', getPreviousMentor)
 
 server.patch('/assignMentor/:mentorId', assignMentor)
 

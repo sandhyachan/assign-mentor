@@ -1,5 +1,5 @@
-const { MentorModel } = require("../model/mentor.model");
-const { StudentModel } = require("../model/student.model");
+const { MentorModel } = require("../model/mentor.model")
+const { StudentModel } = require("../model/student.model")
 
 const createStudent = async (request, response) => {
     try {
@@ -57,38 +57,75 @@ const updateMentor = async (request, response) => {
         const mentorId = request.body.mentorId
 
         const student = await StudentModel.findById(studentId)
-        if(!student){
+        if (!student) {
             return response.status(404).json({
-                message: "Student not Found"
+                message: "Student not found",
             })
         }
 
         const mentor = await MentorModel.findById(mentorId)
-        if(!mentor){
+        if (!mentor) {
             return response.status(404).json({
-                message: "Mentor not Found"
+                message: "Mentor not found",
             })
         }
 
+        if (student.mentor) {
+            student.mentor_history.push({
+                mentor_id: student.mentor,
+                assigned_at: new Date(),
+            })
+        }
         student.mentor = mentorId
         await student.save()
 
-        if(!mentor.assigned_students.includes(studentId)) {
+        if (!mentor.assigned_students.includes(studentId)) {
             mentor.assigned_students.push(studentId)
             await mentor.save()
         }
 
         response.status(200).json({
             message: "Mentor updated for the student successfully",
-            data: student
+            data: student,
         })
     } catch (error) {
-        console.error(error);
+        console.error(error)
         response.status(400).json({
             message: 'Error assigning or changing mentor for student',
+            error: error.message,
+        })
+    }
+}
+
+
+const getPreviousMentor = async (request, response) => {
+    try {
+        const studentId = request.params.studentId
+        const student = await StudentModel.findById(studentId)
+        if(!student){
+            return response.status(404).json({
+                message: "Student not Found"
+            })
+        }
+        if(student.mentor_history.length < 1){
+            return response.status(404).json({
+                message: 'Previous mentor not found',
+            })
+        }
+        const previousMentorId = student.mentor_history[student.mentor_history.length - 1].mentorId
+        const previousMentor = await MentorModel.findById(previousMentorId)
+        return response.status(200).json({
+            message: 'Previous mentor fetched successfully',
+            data: previousMentor,
+        })
+
+    } catch (error) {
+        console.error(error)
+        response.status(400).json({
+            message: 'Error fetching previous mentors for the student',
             error: error.message
         })
     }
 }
 
-module.exports = { createStudent, assignMentor, updateMentor }
+module.exports = { createStudent, assignMentor, updateMentor, getPreviousMentor }
